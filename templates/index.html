@@ -46,7 +46,7 @@
                     }
                     const chunk = value;
 
-                    text = new TextDecoder().decode(chunk);
+                    const text = new TextDecoder().decode(chunk);
                     if(text[0] == 'h'){
                         node = document.createElement("a");
                         node.textContent = text;
