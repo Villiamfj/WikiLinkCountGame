@@ -1,0 +1,83 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>WikiLinkGame</title>
+</head>
+<body>
+    <h1>Wikipedia link game</h1>
+    <h2>How many links can you find!</h2>
+    <label for="path">Wikipedia page:</label><br>
+    <div class="input">
+        <span class="inputPrefix">https://en.wikipedia.org/wiki/</span>
+        <input type="text" id="path" name="path" value="Cheese"><br>
+    </div>
+    <label for="number">Number of link to take:</label><br>
+    <div class="input">
+        <input type="number" id="number" name="path" value="1" >
+    </div>
+    <button id="playButton" onclick="play()">Play</button> 
+
+    <div id="playArea"></div>
+
+    <script>
+        function play(){
+            targetDiv = document.getElementById("playArea");
+            targetDiv.innerHTML = "";
+
+            button = document.getElementById("playButton");
+            button.hidden = true;
+
+            pathInput = document.getElementById('path').value;
+            pathInput = pathInput.replace(" ","_");
+
+            numberInput = document.getElementById('number').value;
+
+            const url = new URL(window.location.origin + '/play'), 
+                params = {path: pathInput, number: numberInput };
+            Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
+            fetch(url)
+            .then((response) => {
+                const reader = response.body.getReader();
+
+                reader.read().then(function processText({done, value}) {
+                    if (done) {
+                        button.hidden = false;
+                        return;
+                    }
+                    const chunk = value;
+
+                    text = new TextDecoder().decode(chunk);
+                    if(text[0] == 'h'){
+                        node = document.createElement("a");
+                        node.textContent = text;
+                        node.href = text;
+                        targetDiv.append(node);
+                        targetDiv.append(document.createElement("br"));
+                    }
+                    else
+                        node = document.createElement("p");
+                        node.textContent = text;
+                        targetDiv.append(node);
+
+                    return reader.read().then(processText);
+                })
+            });
+            
+        }
+    </script>
+    <style>
+        .input {
+            border: 1px black;
+            border-style: solid;
+            max-width: max-content;
+        }
+        .inputPrefix  {
+            color: gray;
+        }
+        input {
+            border-style:hidden;
+            max-width: max-content;
+        }
+    </style>
+</body>
+</html>
