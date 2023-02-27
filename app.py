@@ -25,9 +25,6 @@ def play_route():
         return "A path and a valid number must be given"
 
     linkNumber = int(numberArgument)
-
-    if(pathArgument == ""):
-        return "You need to give a page!"
     if(linkNumber < 1):
         return "You need to give a number larger than 0"
 
